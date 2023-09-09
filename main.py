@@ -1,11 +1,13 @@
 # Dependencies
-import sys
+import cv2, sys
 
+from utils import *
 from webcam import Webcam
+from hands import Hands
 
-# Main function
-if __name__ == '__main__':
-	# Check the arguments passed to the program
+
+def main() -> bool:
+	# Check if the program is in dev mode
 	dev_mode = False
 	for arg in sys.argv:
 		if arg == "-dev":
@@ -14,13 +16,20 @@ if __name__ == '__main__':
 	# Initialize the webcam
 	webcam = Webcam(dev_mode)
 
-	# Launch the algorithm
-	webcam.initMouse()
-	state = webcam.launch()
+	# Initialize the algorithm
+	hands = Hands(webcam)
+	state = hands.algorithm()
 
-	# Destroy the webcam
+	# Destroy objects
+	del hands
 	del webcam
 
-	# Exit the program
+	return (state)
+
+
+# Launch the program
+if __name__ == "__main__":
+	state = main()
+
 	if not state:
 		exit(1)
