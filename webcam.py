@@ -1,6 +1,5 @@
 # Dependencies
 import cv2, pyautogui
-from threading import Thread
 
 from utils import *
 
@@ -21,6 +20,10 @@ class Webcam:
 		self.security_out_of_screen = True
 		self.x_pointer = 0
 		self.y_pointer = 0
+		
+		# Init the mouse click
+		self.left_click = False
+		self.right_click = False
 
 		# Screen informations
 		self.screen_width, self.screen_height = pyautogui.size()
@@ -48,6 +51,28 @@ class Webcam:
 		
 		# Reset the pointer security
 		self.security_out_of_screen = True
+	
+
+	def leftClick(self):
+		# Simulate a left click
+		if not self.left_click:
+			pyautogui.mouseDown(button="left", _pause=False)
+			pyautogui.click(button="left", _pause=False)
+		
+		# Simulate a left click hold
+		else:
+			pyautogui.mouseDown(button="left", _pause=False)
+
+	
+	def rightClick(self):
+		# Simulate a right click
+		if not self.right_click:
+			pyautogui.mouseUp(button="right", _pause=False)
+			pyautogui.click(button="right", _pause=False)
+		
+		# Simulate a right click hold
+		else:
+			pyautogui.mouseDown(button="right", _pause=False)
 
 
 	def getFrame(self) -> bool:

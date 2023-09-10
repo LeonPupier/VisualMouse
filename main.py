@@ -1,16 +1,16 @@
 # Dependencies
-import cv2, sys
+import sys
 
 from utils import *
 from webcam import Webcam
 from hands import Hands
 
 
-def main() -> bool:
+def launch() -> bool:
 	# Check if the program is in dev mode
 	dev_mode = False
 	for arg in sys.argv:
-		if arg == "-dev":
+		if arg == "--dev":
 			dev_mode = True
 
 	# Initialize the webcam
@@ -29,7 +29,7 @@ def main() -> bool:
 
 # Launch the program
 if __name__ == "__main__":
-	state = main()
+	state = launch()
 
 	if not state:
 		exit(1)
