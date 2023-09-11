@@ -1,6 +1,7 @@
 # Dependencies
 import customtkinter
 from tkVideoPlayer import TkinterVideo
+from PIL import Image
 
 from main import launch
 from utils import *
@@ -37,24 +38,44 @@ class App(customtkinter.CTk):
 		self.label_explanation = customtkinter.CTkLabel(self.frame, font=self.main_font)
 
 		# Initialize the buttons
-		self.button = customtkinter.CTkButton(self, text="Next →")
+		self.button = customtkinter.CTkButton(self)
 
 		# Informations text
 		self.label_info = customtkinter.CTkLabel(self, text="[Dev Version] v0.0.1 by Leon Pupier", font=self.copyright_font, text_color="grey")
 		self.label_info.place(x=495, y=590, anchor="e")
 
 		# Launch the tutorial
-		self.step_1()
+		self.opening()
 
 		# Initialize the loop
 		self.loop()
 
 		# Initialize the window loop
 		self.mainloop()
+	
+
+	def opening(self):
+		self.frame_video.pack(expand=True, fill="both", padx=10, pady=10)
+		self.video = TkinterVideo(master=self.frame_video, scaled=True)
+		self.video.configure(bg="#1A1A1A")
+		self.video.load("Content/opening.mp4")
+		self.video.play()
+		self.video.pack(expand=True, fill="both", padx=10, pady=10)
+
+		self.label_step.configure(text="Welcome to VisualMouse !", font=self.bold_font)
+		self.label_step.pack(pady=5)
+		
+		self.label_explanation.configure(text="This is a tutorial to help you understand how to use VisualMouse.", wraplength=400)
+		self.label_explanation.pack(padx=10, pady=5)
+		self.frame.pack()
+		
+		self.button.configure(text="Begin →", command=self.step_1)
+		self.button.pack(pady=15)
 
 
 	def step_1(self):
-		self.frame_video.pack(expand=True, fill="both", padx=10, pady=10)
+		self.video.destroy()
+		self.video.pack_forget()
 		self.video = TkinterVideo(master=self.frame_video, scaled=True)
 		self.video.configure(bg="#1A1A1A")
 		self.video.load("Content/presentation.mp4")
@@ -69,11 +90,12 @@ class App(customtkinter.CTk):
 		self.frame.pack()
 		self.frame.pack()
 		
-		self.button.configure(command=self.step_2)
+		self.button.configure(text="Next →", command=self.step_2)
 		self.button.pack(pady=15)
 	
 
 	def step_2(self):
+		self.video.destroy()
 		self.video.pack_forget()
 		self.video = TkinterVideo(master=self.frame_video, scaled=True)
 		self.video.configure(bg="#1A1A1A")
@@ -88,6 +110,7 @@ class App(customtkinter.CTk):
 
 	
 	def step_3(self):
+		self.video.destroy()
 		self.video.pack_forget()
 		self.video = TkinterVideo(master=self.frame_video, scaled=True)
 		self.video.configure(bg="#1A1A1A")
@@ -102,6 +125,7 @@ class App(customtkinter.CTk):
 
 	
 	def step_4(self):
+		self.video.destroy()
 		self.video.pack_forget()
 		self.video = TkinterVideo(master=self.frame_video, scaled=True)
 		self.video.configure(bg="#1A1A1A")
@@ -117,9 +141,11 @@ class App(customtkinter.CTk):
 	
 	def loop(self):
 		# Replay the video if it's the end
-		self.video.pause()
-		if self.video.is_paused():
-			self.video.play()
+		try:
+			if self.video.is_paused():
+				self.video.play()
+		except:
+			pass
 			
 		# Loop method
 		self.after(10, self.loop)
