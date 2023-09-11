@@ -24,6 +24,9 @@ class Webcam:
 		# Init the mouse click
 		self.left_click = False
 		self.right_click = False
+		self.left_click_hold = 0
+		self.right_click_hold = 0
+		self.gap_hold = 20
 
 		# Screen informations
 		self.screen_width, self.screen_height = pyautogui.size()
@@ -42,9 +45,17 @@ class Webcam:
 		if self.security_out_of_screen:
 			return
 
-		# Correction of the pointer position to match the screen size
-		x = int(self.x_pointer * self.screen_width / self.webcam_width)
-		y = int(self.y_pointer * self.screen_height / self.webcam_height)
+		# Get the pointer position
+		x = self.x_pointer - self.webcam_width / 2
+		y = self.y_pointer - self.webcam_height / 2
+
+		# Correct the pointer position
+		x = x * self.screen_width / (self.webcam_width * 0.7)
+		y = y * self.screen_height / (self.webcam_height * 0.7)
+
+		# Set the pointer position
+		x = x + self.screen_width / 2
+		y = y + self.screen_height / 2
 
 		# Move the mouse pointer
 		pyautogui.moveTo(x, y, duration=0, _pause=False)
@@ -56,23 +67,36 @@ class Webcam:
 	def leftClick(self):
 		# Simulate a left click
 		if not self.left_click:
-			pyautogui.mouseDown(button="left", _pause=False)
 			pyautogui.click(button="left", _pause=False)
 		
 		# Simulate a left click hold
 		else:
-			pyautogui.mouseDown(button="left", _pause=False)
-
+			if self.left_click_hold >= self.gap_hold:
+				pyautogui.mouseDown(button="left", _pause=False)
+			self.left_click_hold += 1
+			print(self.left_click_hold)
 	
+
+	def	leftUp(self):
+		self.left_click_hold = 0
+		pyautogui.mouseUp(button="left", _pause=False)
+
+
 	def rightClick(self):
 		# Simulate a right click
 		if not self.right_click:
-			pyautogui.mouseUp(button="right", _pause=False)
 			pyautogui.click(button="right", _pause=False)
 		
 		# Simulate a right click hold
 		else:
-			pyautogui.mouseDown(button="right", _pause=False)
+			if self.right_click_hold >= self.gap_hold:
+				pyautogui.mouseDown(button="right", _pause=False)
+			self.right_click_hold += 1
+	
+
+	def rightUp(self):
+		self.right_click_hold = 0
+		pyautogui.mouseUp(button="right", _pause=False)
 
 
 	def getFrame(self) -> bool:

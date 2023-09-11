@@ -46,6 +46,7 @@ class Hands:
 				middle_finger_position = results.multi_hand_landmarks[0].landmark[self.mpHands.HandLandmark.MIDDLE_FINGER_TIP]
 				if middle_finger_position.y < thumb_position.y:
 					self.webcam.left_click = False
+					self.webcam.leftUp()
 				else:
 					self.webcam.leftClick()
 					self.webcam.left_click = True
@@ -54,6 +55,7 @@ class Hands:
 				index_finger_position = results.multi_hand_landmarks[0].landmark[self.mpHands.HandLandmark.INDEX_FINGER_TIP]
 				if index_finger_position.y < thumb_position.y:
 					self.webcam.right_click = False
+					self.webcam.rightUp()
 				else:
 					self.webcam.rightClick()
 					self.webcam.right_click = True
