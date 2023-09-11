@@ -74,7 +74,6 @@ class Webcam:
 			if self.left_click_hold >= self.gap_hold:
 				pyautogui.mouseDown(button="left", _pause=False)
 			self.left_click_hold += 1
-			print(self.left_click_hold)
 	
 
 	def	leftUp(self):
