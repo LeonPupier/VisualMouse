@@ -85,7 +85,7 @@ class App(customtkinter.CTk):
 		self.label_step.configure(text="1/4")
 		self.label_step.pack()
 		
-		self.label_explanation.configure(text="This is the best way to position your hand so that the programme understands your movements.", wraplength=450)
+		self.label_explanation.configure(text="Here's the best way to position your hand so the program understands your movements.", wraplength=450)
 		self.label_explanation.pack(padx=10, pady=5)
 		self.frame.pack()
 		self.frame.pack()
@@ -119,7 +119,7 @@ class App(customtkinter.CTk):
 		self.video.pack(expand=True, fill="both", padx=10, pady=10)
 		
 		self.label_step.configure(text="3/4")
-		self.label_explanation.configure(text="To simulate a left mouse click, you need to lower your middle finger as shown.", wraplength=400)
+		self.label_explanation.configure(text="To simulate a left mouse click, you need to lower the tip of your middle finger below the tip of your thumb.", wraplength=400)
 		
 		self.button.configure(command=self.step_4)
 
@@ -134,7 +134,7 @@ class App(customtkinter.CTk):
 		self.video.pack(expand=True, fill="both", padx=10, pady=10)
 		
 		self.label_step.configure(text="4/4")
-		self.label_explanation.configure(text="To simulate a right mouse click, you need to lower your index finger as shown.", wraplength=400)
+		self.label_explanation.configure(text="To simulate a right mouse click, you need to lower the tip of your index below the tip of your thumb.", wraplength=400)
 		
 		self.button.configure(text="Start now !", command=self.start)
 

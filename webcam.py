@@ -26,7 +26,7 @@ class Webcam:
 		self.right_click = False
 		self.left_click_hold = 0
 		self.right_click_hold = 0
-		self.gap_hold = 20
+		self.gap_hold = 15
 
 		# Screen informations
 		self.screen_width, self.screen_height = pyautogui.size()
