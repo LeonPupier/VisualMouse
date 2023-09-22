@@ -1,10 +1,10 @@
 # Dependencies
-import customtkinter
-from tkVideoPlayer import TkinterVideo
-from PIL import Image
+import customtkinter, sys
+from threading import Thread
 
-from main import launch
 from utils import *
+from webcam import Webcam
+from hands import Hands
 
 # Set the appearance mode
 customtkinter.set_appearance_mode("dark")
@@ -12,11 +12,17 @@ customtkinter.set_default_color_theme("dark-blue")
 
 # Window class
 class App(customtkinter.CTk):
-	def __init__(self):
+	def __init__(self) -> None:
+		# Check if the program is in dev mode
+		self.dev_mode = False
+		for arg in sys.argv:
+			if arg == "--dev":
+				self.dev_mode = True
+
 		# Initialize the window
 		super().__init__()
-		self.geometry("500x600")
-		self.title("VisualMouse - Movement start-up tutorial")
+		self.geometry("300x65")
+		self.title("VisualMouse")
 		self.resizable(False, False)
 		self.protocol("WM_DELETE_WINDOW", self.on_closing)
 		center_window(self)
@@ -26,147 +32,114 @@ class App(customtkinter.CTk):
 		self.main_font = customtkinter.CTkFont(size=13)
 		self.copyright_font = customtkinter.CTkFont(size=9, slant='italic')
 
-		# Video	player
-		self.frame_video = customtkinter.CTkFrame(self)
-		self.video = None
-
-		# Text of the current step in the tutorial
-		self.label_step = customtkinter.CTkLabel(self, font=self.bold_font)
-
-		# Text of the current step in the tutorial
+		# Text of the current state of the program execution
 		self.frame = customtkinter.CTkFrame(self)
-		self.label_explanation = customtkinter.CTkLabel(self.frame, font=self.main_font)
+		self.frame.grid(row=0, column=0, padx=10, pady=5)
+		self.label_state = customtkinter.CTkLabel(self.frame, font=self.main_font)
 
 		# Initialize the buttons
-		self.button = customtkinter.CTkButton(self)
+		self.button = customtkinter.CTkButton(self, width=80, command=self.pause)
 
 		# Informations text
-		self.label_info = customtkinter.CTkLabel(self, text="[Dev Version] v0.0.1 by Leon Pupier", font=self.copyright_font, text_color="grey")
-		self.label_info.place(x=495, y=590, anchor="e")
+		self.label_info = customtkinter.CTkLabel(self, text=f"{VERSION} by Léon Pupier", font=self.copyright_font, text_color="grey", width=0, height=0)
+		self.label_info.place(x=10, y=self.winfo_height() - 10, anchor="w")
 
-		# Launch the tutorial
-		self.opening()
+		# Text to exit the program
+		self.label_exit = customtkinter.CTkLabel(self.frame, font=self.main_font, text="Do you want to exit ?")
 
-		# Initialize the loop
-		self.loop()
+		# Buttons to exit the program
+		self.button_yes = customtkinter.CTkButton(self, text="Yes", width=65, command=self.exit)
+		self.button_no = customtkinter.CTkButton(self, text="No", width=65, command=self.show)
+
+		# Initialize the webcam
+		self.webcam = None
+
+		# Initialize the algorithm
+		self.hands = None
+		self.algo_thread = None
+
+		# Show the window
+		self.show()
+
+		# Start the algorithm
+		self.resume()
 
 		# Initialize the window loop
 		self.mainloop()
 	
 
-	def opening(self):
-		self.frame_video.pack(expand=True, fill="both", padx=10, pady=10)
-		self.video = TkinterVideo(master=self.frame_video, scaled=True)
-		self.video.configure(bg="#1A1A1A")
-		self.video.load("Content/opening.mp4")
-		self.video.play()
-		self.video.pack(expand=True, fill="both", padx=10, pady=10)
-
-		self.label_step.configure(text="Welcome to VisualMouse !", font=self.bold_font)
-		self.label_step.pack(pady=5)
-		
-		self.label_explanation.configure(text="This is a tutorial to help you understand how to use VisualMouse.", wraplength=400)
-		self.label_explanation.pack(padx=10, pady=5)
-		self.frame.pack()
-		
-		self.button.configure(text="Begin →", command=self.step_1)
-		self.button.pack(pady=15)
-
-
-	def step_1(self):
-		self.video.destroy()
-		self.video.pack_forget()
-		self.video = TkinterVideo(master=self.frame_video, scaled=True)
-		self.video.configure(bg="#1A1A1A")
-		self.video.load("Content/presentation.mp4")
-		self.video.play()
-		self.video.pack(expand=True, fill="both", padx=10, pady=10)
-
-		self.label_step.configure(text="1/4")
-		self.label_step.pack()
-		
-		self.label_explanation.configure(text="Here's the best way to position your hand so the program understands your movements.", wraplength=450)
-		self.label_explanation.pack(padx=10, pady=5)
-		self.frame.pack()
-		self.frame.pack()
-		
-		self.button.configure(text="Next →", command=self.step_2)
-		self.button.pack(pady=15)
+	def __del__(self) -> None:
+		# Destroy objects
+		if self.hands:
+			del self.hands
+		if self.webcam:
+			del self.webcam
 	
 
-	def step_2(self):
-		self.video.destroy()
-		self.video.pack_forget()
-		self.video = TkinterVideo(master=self.frame_video, scaled=True)
-		self.video.configure(bg="#1A1A1A")
-		self.video.load("Content/movement.mp4")
-		self.video.play()
-		self.video.pack(expand=True, fill="both", padx=10, pady=10)
+	def show(self) -> None:
+		# Hide the exit widgets
+		self.label_exit.pack_forget()
+		self.button_yes.grid_forget()
+		self.button_no.grid_forget()
 
-		self.label_step.configure(text="2/4")
-		self.label_explanation.configure(text="To move the mouse on the screen, you can move your hand. The pointer follows your thumb.", wraplength=400)
+		# Show the widgets
+		self.label_state.pack(padx=10, pady=5)
+		self.button.grid(row=0, column=1)
+
+
+	def pause(self) -> None:
+		# Wait the end of the algorithm thread
+		self.hands.paused = True
+		self.algo_thread.join()
+
+		# Destroy the objects
+		del self.hands
+		del self.webcam
+		self.hands = None
+		self.webcam = None
+
+		# Pause the program
+		self.button.configure(text="Resume", command=self.resume)
+		self.label_state.configure(text="State of VisualMouse: Paused")
+
+
+	def resume(self) -> None:
+		# Initialize the webcam
+		self.webcam = Webcam(self.dev_mode)
+
+		# Initialize the algorithm
+		self.hands = Hands(self.webcam)
+		self.hands.paused = False
 		
-		self.button.configure(command=self.step_3)
+		# Restart the algorithm
+		self.algo_thread = Thread(target=self.hands.algorithm)
+		self.algo_thread.start()
 
+		# Resume the program
+		self.button.configure(text="Pause", command=self.pause)
+		self.label_state.configure(text="State of VisualMouse: Running")
+
+
+	def on_closing(self) -> None:
+		# Pack forget the widgets
+		self.label_state.pack_forget()
+		self.button.grid_forget()
+
+		self.label_exit.pack(padx=10, pady=5)
+		self.button_yes.grid(row=0, column=1)
+		self.button_no.grid(row=0, column=2, padx=5)
 	
-	def step_3(self):
-		self.video.destroy()
-		self.video.pack_forget()
-		self.video = TkinterVideo(master=self.frame_video, scaled=True)
-		self.video.configure(bg="#1A1A1A")
-		self.video.load("Content/left.mp4")
-		self.video.play()
-		self.video.pack(expand=True, fill="both", padx=10, pady=10)
-		
-		self.label_step.configure(text="3/4")
-		self.label_explanation.configure(text="To simulate a left mouse click, you need to lower the tip of your middle finger below the tip of your thumb.", wraplength=400)
-		
-		self.button.configure(command=self.step_4)
 
-	
-	def step_4(self):
-		self.video.destroy()
-		self.video.pack_forget()
-		self.video = TkinterVideo(master=self.frame_video, scaled=True)
-		self.video.configure(bg="#1A1A1A")
-		self.video.load("Content/right.mp4")
-		self.video.play()
-		self.video.pack(expand=True, fill="both", padx=10, pady=10)
-		
-		self.label_step.configure(text="4/4")
-		self.label_explanation.configure(text="To simulate a right mouse click, you need to lower the tip of your index below the tip of your thumb.", wraplength=400)
-		
-		self.button.configure(text="Start now !", command=self.start)
+	def exit(self) -> None:
+		# Wait the end of the algorithm thread
+		if self.hands:
+			self.hands.paused = True
+			self.algo_thread.join()
 
-	
-	def loop(self):
-		# Replay the video if it's the end
-		try:
-			if self.video.is_paused():
-				self.video.play()
-		except:
-			pass
-			
-		# Loop method
-		self.after(10, self.loop)
-
-
-	def on_closing(self):
 		# Destroy the window
 		self.destroy()
 		exit(0)
-	
-	
-	def start(self):
-		# Destroy the window
-		self.destroy()
-
-		state = launch()
-		if not state:
-			exit(1)
-		exit(0)
-
-
+		
 
 # Launch the app
 if __name__ == "__main__":

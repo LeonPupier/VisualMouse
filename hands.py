@@ -15,6 +15,7 @@ class Hands:
 		self.mpHands = mp.solutions.hands
 		self.hands = self.mpHands.Hands(static_image_mode, max_num_hand, model_complexity, min_detection_confidence,min_tracking_confidence)
 		self.mpDraw = mp.solutions.drawing_utils
+		self.paused = False
 
 
 	def __del__(self) -> None:
@@ -42,18 +43,24 @@ class Hands:
 				self.webcam.y_pointer = thumb_position.y * self.webcam.webcam_height
 				self.webcam.security_out_of_screen = False
 
-				# Detect if the middle finger is closed (Left click)
-				middle_finger_position = results.multi_hand_landmarks[0].landmark[self.mpHands.HandLandmark.MIDDLE_FINGER_TIP]
-				if middle_finger_position.y < thumb_position.y:
+				# Position of the first phalanx of the index finger
+				index_phalanx_position = results.multi_hand_landmarks[0].landmark[self.mpHands.HandLandmark.INDEX_FINGER_MCP]
+
+				# Detect if the index finger is closed (Left click)
+				index_finger_position = results.multi_hand_landmarks[0].landmark[self.mpHands.HandLandmark.INDEX_FINGER_TIP]
+				if index_finger_position.y < index_phalanx_position.y:
 					self.webcam.left_click = False
 					self.webcam.leftUp()
 				else:
 					self.webcam.leftClick()
 					self.webcam.left_click = True
-
-				# Detect if the index finger is closed (Right click)
-				index_finger_position = results.multi_hand_landmarks[0].landmark[self.mpHands.HandLandmark.INDEX_FINGER_TIP]
-				if index_finger_position.y < thumb_position.y:
+				
+				# Position of the first phalanx of the middle finger
+				middle_phalanx_position = results.multi_hand_landmarks[0].landmark[self.mpHands.HandLandmark.MIDDLE_FINGER_MCP]
+				
+				# Detect if the middle finger is closed (Right click)
+				middle_finger_position = results.multi_hand_landmarks[0].landmark[self.mpHands.HandLandmark.MIDDLE_FINGER_TIP]
+				if middle_finger_position.y < middle_phalanx_position.y:
 					self.webcam.right_click = False
 					self.webcam.rightUp()
 				else:
@@ -63,6 +70,11 @@ class Hands:
 
 	def algorithm(self) -> bool:
 		while True:
+			# Check if the program is paused
+			if self.paused:
+				cv2.destroyAllWindows()
+				return (False)
+
 			# Get the frame from the webcam
 			if not self.webcam.getFrame():
 				return (False)

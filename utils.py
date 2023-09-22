@@ -1,3 +1,6 @@
+# Informations
+VERSION = "[Dev version] v0.0.1"
+
 # Output colors
 class output:
 	HEADER = '\033[95m'

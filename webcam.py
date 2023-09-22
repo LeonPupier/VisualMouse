@@ -58,10 +58,13 @@ class Webcam:
 		y = y + self.screen_height / 2
 
 		# Move the mouse pointer
-		pyautogui.moveTo(x, y, duration=0, _pause=False)
-		
-		# Reset the pointer security
-		self.security_out_of_screen = True
+		try:
+			pyautogui.moveTo(x, y, duration=0, _pause=False)
+
+			# Reset the pointer security
+			self.security_out_of_screen = True
+		except (pyautogui.FailSafeException):
+			return
 	
 
 	def leftClick(self):

@@ -57,12 +57,12 @@ python3 -m pip install -r requirements.txt
 ```
 **3.** You can now run the main file of the program with Python:
 ```
-python3 app.py
+python3 tutorial.py
 ```
 
 **3.1** If you want to use *VisualMouse* without the tutorial at the beginning, run this command instead:
 ```
-python3 main.py
+python3 app.py
 ```
 
 You are now ready to use VisualMouse!
