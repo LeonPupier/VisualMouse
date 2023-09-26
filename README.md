@@ -34,17 +34,9 @@ not required
 > [!IMPORTANT]
 > *The software currently works with Python version 3.11.x*
 
-#### Windows - Download the release
+#### Windows/Linux/MacOS - Clone the repository
 
-**1.** To install VisualMouse on your computer under Windows, you need to download the latest [release](https://github.com/LeonPupier/VisualMouse/releases/latest).
-
-**2.** You will need to follow the installation setup of *VisualMouseSetup.exe*.
-
-You are now ready to use VisualMouse!
-
-#### Linux/MacOS - Clone the repository
-
-**1.** To install VisualMouse on your computer under Linux or MacOS, you need to clone the [repository](https://github.com/LeonPupier/VisualMouse.git).
+**1.** To install VisualMouse on your computer, you need to clone the [repository](https://github.com/LeonPupier/VisualMouse.git).
 
 **2.** Before you can launch the software, you must install its dependencies.
 Nothing could be simpler, just run this command at the root of the folder:
@@ -66,6 +58,9 @@ python3 app.py
 ```
 
 You are now ready to use VisualMouse!
+
+### Informations
+I am working on an executable version of the software.
 
 ### How to support me ?
 If you want to help me financially to support my projects and my little student life,
