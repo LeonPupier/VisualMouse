@@ -68,5 +68,9 @@ I would greatly appreciate a small donation from you on **Ko-Fi** :)
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/V7V5C9VK8)
 
+### Credits
+Software designed and developed by Leon Pupier.
+The hands used as illustrations for the tutorial were drawn by Maya Pupier.
+
 ### Contact me
 [e-mail](mailto:public_contact.l2qt6@slmail.me) - [website](https://leonpupier.fr)
