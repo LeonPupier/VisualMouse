@@ -10,7 +10,6 @@
   
   [![Release](https://img.shields.io/github/release/LeonPupier/VisualMouse.svg)](https://github.com/LeonPupier/VisualMouse/releases)
   [![HitCount](https://img.shields.io/endpoint?url=https%3A%2F%2Fhits.dwyl.com%2FLeonPupier%2FVisualMouse.json%3Fcolor%3Dgreen)](http://hits.dwyl.com/LeonPupier/VisualMouse)
-  ![](https://sloc.xyz/github/LeonPupier/VisualMouse)
   [![Last commit](https://img.shields.io/github/last-commit/LeonPupier/VisualMouse.svg)](https://github.com/LeonPupier/VisualMouse/)
 </div>
 
